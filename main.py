@@ -86,6 +86,7 @@ class Q1TemplateBot(ForecastBot):
             The superforecaster will give you a question they intend to forecast on.
             To be a great assistant, you generate a concise but detailed rundown of the most relevant news, including if the question would resolve Yes or No based on current information.
             You do not produce forecasts yourself.
+            You are calm, confident, and want to be a great assistant.
 
             Question:
             {question}
@@ -97,7 +98,7 @@ class Q1TemplateBot(ForecastBot):
             model_name = "perplexity/sonar-pro" # perplexity/sonar-reasoning and perplexity/sonar are cheaper, but do only 1 search.
         model = GeneralLlm(
             model=model_name,
-            temperature=0.1,
+            temperature=0.2,
         )
         response = await model.invoke(prompt)
         return response
@@ -106,7 +107,7 @@ class Q1TemplateBot(ForecastBot):
     def _get_final_decision_llm(self) -> GeneralLlm:
         model = None
         if os.getenv("OPENROUTER_API_KEY"):
-            model = GeneralLlm(model="openrouter/google/gemma-3-12b-it:free", temperature=0.3)
+            model = GeneralLlm(model="openrouter/deepseek/deepseek-r1:free", temperature=0.3)
         else:
             raise ValueError("No API key for final_decision_llm found")
         return model
@@ -116,7 +117,7 @@ class Q1TemplateBot(ForecastBot):
     ) -> ReasonedPrediction[float]:
         prompt = clean_indents(
             f"""
-            You are a professional forecaster interviewing for a job.
+            You are a professional forecaster interviewing for a job. You really want this job, so you want to do the best job forecasting as you can.
 
             Your interview question is:
             {question.question_text}
@@ -161,7 +162,7 @@ class Q1TemplateBot(ForecastBot):
     ) -> ReasonedPrediction[PredictedOptionList]:
         prompt = clean_indents(
             f"""
-            You are a professional forecaster interviewing for a job.
+            You are a professional forecaster interviewing for a job. You really want this job, so you want to do the best job forecasting as you can.
 
             Your interview question is:
             {question.question_text}
